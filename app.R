@@ -1,7 +1,15 @@
 library(shiny)
+library(tidyverse)
 library(gapminder)
 
 dataPanel <- tabPanel("Data",
+                      selectInput(
+                        inputId = "selYear",
+                        label = "Select the Year",
+                        multiple = TRUE,
+                        choices = gapminder %>% select(year) %>% unique %>% arrange,
+                        selected = gapminder %>% select(year) %>% head(1)
+                      ),
                       tableOutput("data")
 )
 
@@ -12,7 +20,7 @@ ui <- navbarPage("shiny App",
 )
 # Define server logic required to draw a histogram
 server <- function(input, output) { 
-  output$data <- renderTable(gapminder)
+  output$data <- renderTable(gapminder %>% filter(year %in% input$selYear))
 }
 
 # Run the application 
